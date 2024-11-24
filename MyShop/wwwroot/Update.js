@@ -24,10 +24,10 @@ const updateUser = async () => {
             },
             body: JSON.stringify(user)
         });
-        if (responsePost.status == 204) {
+        if (responsePost.status == 204) {//204 is not found, not week password
             alert("weak password")
         }
-        if (responsePost.status == 400) {
+        if (responsePost.status == 400) {//תחליפו את הסטטוסים
             alert("user not found")
         }
         else if (!responsePost.ok) {
