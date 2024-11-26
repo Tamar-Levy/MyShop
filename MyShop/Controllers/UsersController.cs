@@ -68,7 +68,7 @@ namespace MyShop.Controllers
         public ActionResult<User> Put(int id, [FromBody] User userToUpdate)
         {
             User userUpdate = _UserServices.UpdateUser(id,userToUpdate);
-            if (userUpdate != null)
+            if (userUpdate != null)// check like in register
                 return Ok(userUpdate);
             return BadRequest();
         }
