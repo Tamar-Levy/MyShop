@@ -2,6 +2,8 @@
 using System.Text.Json;
 using Entities;
 using Services;
+using DTO;
+using AutoMapper;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MyShop.Controllers
@@ -10,73 +12,76 @@ namespace MyShop.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        IUserServices _UserServices;
+        IUserService _userServices;
+        IMapper _mapper;
 
-        public UsersController(IUserServices userServices)
+        public UsersController(IUserService userServices,IMapper mapper)
         {
-            _UserServices = userServices;
+            _userServices = userServices;
+            _mapper = mapper;
         }
 
-        // GET: api/<UsersController>
-        [HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return 
-        //}
-
-        //// GET api/<UsersController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+        // GET api/<UsersController>/5
+        [HttpGet("{id}")]
+        public async Task<UserDTO> Get(int id)
+        {
+          User user = await _userServices.GetById(id);
+          return _mapper.Map <User,UserDTO>(user);
+        }
 
         // POST api/<UsersController>
         [HttpPost]
         [Route("login")]
-        public ActionResult<User> Login([FromQuery] string userName , [FromQuery] string password)
+        public async Task<ActionResult<User>> Login([FromQuery] string email , [FromQuery] string password)
         {
-            User user = _UserServices.LoginUser(userName, password);
-            if(user!=null)
-                   return Ok(user);
+            User user=await _userServices.LoginUser(email, password);
+            if (user != null) { 
+                   return Ok(user);}
              return BadRequest();
-
-
         }
 
         [HttpPost]
-        public ActionResult<User> Register([FromBody] User user)
+        public async Task<ActionResult<User>> Register([FromBody] User user)
         {
-            User userRegister = _UserServices.RegisterUser(user);
+            User userRegister =await _userServices.RegisterUser(user);
             if (userRegister != null)
             {
-                if (userRegister.FirstName == "weak password")
+                if(userRegister.FirstName== "Weak password")
+                {
                     return NoContent();
-              return Ok(userRegister);
-            }
+                }
+                return Ok(userRegister);
+            }  
             return BadRequest();
         }
+
         [HttpPost]
         [Route("password")]
-        public int CheckPassword([FromBody]string password)
+        public int CheckPassword([FromBody] String password)
         {
-             return _UserServices.UserPassword(password);
+            return _userServices.CheckPassword(password);
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public ActionResult<User> Put(int id, [FromBody] User userToUpdate)
+        public async Task<ActionResult<User>> Put(int id, [FromBody] User userToUpdate)
         {
-            User userUpdate = _UserServices.UpdateUser(id,userToUpdate);
+            User userUpdate =await _userServices.UpdateUser(id,userToUpdate);
             if (userUpdate != null)
+            {
+                if (userUpdate.FirstName == "Weak password")
+                {
+                    return NoContent();
+                }
                 return Ok(userUpdate);
+            }
             return BadRequest();
         }
 
-        // DELETE api/<UsersController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //// DELETE api/<UsersController>/5
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }

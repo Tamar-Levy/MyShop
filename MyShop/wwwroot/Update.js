@@ -7,11 +7,11 @@ const toUpdate = () => {
 }
 
 const getDataFromForm = () => {
-    const userName = document.querySelector("#userName").value;
+    const email = document.querySelector("#email").value;
     const password = document.querySelector("#password").value;
     const firstName = document.querySelector("#firstName").value;
     const lastName = document.querySelector("#lastName").value;
-    return { userName, password, firstName, lastName };
+    return { email, password, firstName, lastName };
 }
 
 const updateUser = async () => {
@@ -36,7 +36,7 @@ const updateUser = async () => {
         else {
             const data = await responsePost.json();
             sessionStorage.setItem('user', JSON.stringify(data))
-            alert(`${data.userName} updated`);
+            alert(`${data.email} updated`);
         }
     }
     catch (error) {

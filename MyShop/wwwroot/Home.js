@@ -1,15 +1,15 @@
 ﻿
 
 const getLoginDataFromForm = () => {
-    const userName = document.querySelector("#loginUserName").value;
+    const email = document.querySelector("#loginUserName").value;
     const password = document.querySelector("#loginPassword").value;
-    return { userName, password };
+    return { email, password };
 }
 
 const userLogIn = async () => {
-    const { userName, password } = getLoginDataFromForm();
+    const { email, password } = getLoginDataFromForm();
     try {
-        const responsePost = await fetch(`api/users/login?userName=${userName}&password=${password}`, {
+        const responsePost = await fetch(`api/users/login?email=${email}&password=${password}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -21,7 +21,7 @@ const userLogIn = async () => {
             alert("Error, Please try again")
         else {
             const data = await responsePost.json();
-            alert(`${data.userName} logged in`);
+            alert(`${data.email} logged in`);
             sessionStorage.setItem('user', JSON.stringify(data))
             window.location.href="./update.html"
             }
@@ -37,11 +37,11 @@ const toRegister = () => {
 }
 
 const getRegisterDataFromForm = () => { 
-    const userName = document.querySelector("#userName").value;
+    const email = document.querySelector("#email").value;
     const password = document.querySelector("#password").value;
     const firstName = document.querySelector("#firstName").value;
     const lastName = document.querySelector("#lastName").value;
-    return { userName, password, firstName, lastName };
+    return { email, password, firstName, lastName };
 }
 
 const createUser = async () => {
@@ -59,7 +59,7 @@ const createUser = async () => {
         if (!responsePost.ok)
             alert("Error, Please try again")
         const data = await responsePost.json();
-            alert(`${data.userName} created`);
+        alert(`${data.email} created`);
     }
     catch (error){
         throw error;
