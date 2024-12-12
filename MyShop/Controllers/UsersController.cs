@@ -41,9 +41,10 @@ namespace MyShop.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Register([FromBody] User user)
+        public async Task<ActionResult<User>> Register([FromBody] PostUserDTO user)
         {
-            User userRegister =await _userServices.RegisterUser(user);
+            User NewUser = _mapper.Map<PostUserDTO, User>(user);
+            User userRegister =await _userServices.RegisterUser(NewUser);
             if (userRegister != null)
             {
                 if(userRegister.FirstName== "Weak password")
@@ -64,9 +65,10 @@ namespace MyShop.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> Put(int id, [FromBody] User userToUpdate)
+        public async Task<ActionResult<User>> Put(int id, [FromBody] PostUserDTO userToUpdate)
         {
-            User userUpdate =await _userServices.UpdateUser(id,userToUpdate);
+            User NewUser = _mapper.Map<PostUserDTO, User>(userToUpdate);
+            User userUpdate =await _userServices.UpdateUser(id, NewUser);
             if (userUpdate != null)
             {
                 if (userUpdate.FirstName == "Weak password")
@@ -77,11 +79,5 @@ namespace MyShop.Controllers
             }
             return BadRequest();
         }
-
-        //// DELETE api/<UsersController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

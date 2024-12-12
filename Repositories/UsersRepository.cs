@@ -16,8 +16,7 @@ public class UsersRepository : IUsersRepository
     // GetById
     public async Task<User> GetById(int id)
     {
-        List<Order> allOrders = await _context.Orders.Include(c => c.User).ToListAsync<Order>();
-        return await _context.Users.FirstOrDefaultAsync(user => user.UserId == id);
+        return await _context.Users.Include(u=>u.Orders).FirstOrDefaultAsync(user => user.UserId == id);
     }
 
     //Login
@@ -40,6 +39,7 @@ public class UsersRepository : IUsersRepository
     // Update
     public async Task<User> UpdateUser(int id, User userToUpdate)
     {
+        userToUpdate.UserId = id;
         _context.Users.Update(userToUpdate);
         await _context.SaveChangesAsync();
         return userToUpdate;

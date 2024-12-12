@@ -24,16 +24,17 @@ namespace MyShop.Controllers
         [HttpGet("{id}")]
         public async Task<OrderDTO> Get(int id)
         {
-            Order order= await _ordersService.GetById(id);
+            Order order = await _ordersService.GetById(id);
 
             return _mapper.Map<Order, OrderDTO>(order);
         }
 
         // POST api/<OrdersController>
         [HttpPost]
-        public async Task<Order> Post([FromBody] Order order)
+        public async Task<Order> Post([FromBody] PostOrderDTO order)
         {
-            return await _ordersService.AddOrder(order);
+            Order NewOrder =_mapper.Map<PostOrderDTO, Order>(order);
+            return await _ordersService.AddOrder(NewOrder);
         }
     }
 }

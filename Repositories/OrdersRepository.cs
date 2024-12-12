@@ -20,8 +20,7 @@ namespace Repositories
         //Get
         public async Task<Order> GetById(int id)
         {
-            List<Order> allCategories = await _context.Orders.Include(c => c.User).ToListAsync<Order>();
-            return await _context.Orders.FirstOrDefaultAsync(order => order.OrderId == id);
+            return await _context.Orders.Include(o=>o.User).FirstOrDefaultAsync(order => order.OrderId == id);
         }
 
         //Post
