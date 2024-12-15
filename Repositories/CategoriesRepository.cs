@@ -28,9 +28,9 @@ namespace Repositories
         {
             //List<Product> allProducts = await _context.Products.Include(c => c.Category).ToListAsync<Product>();
             Category categoryFound = await _context.Categories.FirstOrDefaultAsync(category => category.CategoryId == id);
-            if (categoryFound != null)
-                return categoryFound;
-            return null;
+            //if (categoryFound != null)
+                return categoryFound;//if itws null- will return null
+            //return null;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Repositories
         }
         public async Task<Product> AddProduct(Product product)
         {
-            await _context.Products.AddAsync(product);
+            var res=await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             return product;
         }
