@@ -35,13 +35,13 @@ namespace MyShop.Controllers
         public async Task<ActionResult<User>> Login([FromQuery] string email , [FromQuery] string password)
         {
             User user=await _userServices.LoginUser(email, password);
-            if (user != null) { 
+            if (user != null) { //map to userDto
                    return Ok(user);}
              return BadRequest();
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Register([FromBody] User user)
+        public async Task<ActionResult<User>> Register([FromBody] User user)//get user as userDto, map to user.
         {
             User userRegister =await _userServices.RegisterUser(user);
             if (userRegister != null)
@@ -50,7 +50,7 @@ namespace MyShop.Controllers
                 {
                     return NoContent();
                 }
-                return Ok(userRegister);
+                return Ok(userRegister);//map to userDto
             }  
             return BadRequest();
         }
@@ -64,7 +64,7 @@ namespace MyShop.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> Put(int id, [FromBody] User userToUpdate)
+        public async Task<ActionResult<User>> Put(int id, [FromBody] User userToUpdate)//get user as userDto, map to user.
         {
             User userUpdate =await _userServices.UpdateUser(id,userToUpdate);
             if (userUpdate != null)
@@ -73,7 +73,7 @@ namespace MyShop.Controllers
                 {
                     return NoContent();
                 }
-                return Ok(userUpdate);
+                return Ok(userUpdate);//map to userDto
             }
             return BadRequest();
         }
