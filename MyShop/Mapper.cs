@@ -16,6 +16,7 @@ namespace MyShop
             CreateMap<LoginUserDTO, User>();
             CreateMap<PostUserDTO, User>();
             CreateMap<Category, CategoryDTO>();
+ 
         }
     }
 }
