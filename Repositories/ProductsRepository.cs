@@ -18,10 +18,14 @@ namespace Repositories
         }
 
         //Get
-        public async Task<List<Product>> Get()
+        public async Task<List<Product>> Get(int position,int skip, string? name, int? minPrice, int? maxPrice, int?[]categoryIds)
         {
-            List<Category> allCategories = await _context.Categories.Include(c => c.Products).ToListAsync<Category>();
-            return await _context.Products.ToListAsync();
+            var query = _context.Products.Include(c => c.Category).Where(product => (name == null ? (true) : (product.Description.Contains(name)))
+            && ((minPrice == null) ? (true) : (product.Price >= minPrice))
+            && ((maxPrice == null) ? (true) : (product.Price <= maxPrice))
+            && ((categoryIds.Length == 0) ? (true) : (categoryIds.Contains(product.CategoryId)))).OrderBy(product => product.Price);
+            List<Product> products = await query.ToListAsync();
+            return products;
         }
         public async Task<Product> AddProduct(Product product)
         {

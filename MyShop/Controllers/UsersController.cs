@@ -32,11 +32,11 @@ namespace MyShop.Controllers
         // POST api/<UsersController>
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<User>> Login([FromQuery] string email , [FromQuery] string password)
+        public async Task<ActionResult<LoginUserDTO>> Login([FromQuery] string email , [FromQuery] string password)
         {
             User user=await _userServices.LoginUser(email, password);
-            if (user != null) { 
-                   return Ok(user);}
+            if (user != null) 
+                return Ok(_mapper.Map<User, LoginUserDTO>(user));
              return BadRequest();
         }
 
