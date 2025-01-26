@@ -1,7 +1,7 @@
 ﻿
 let urlString = `api/Products`
 
-const drawProducts = async () => { 
+const drawProducts = async () => { //divide it to 2 funcs- getProducts and drawProducts. onload call get, and from get call draw.
     try {
         const allProducts = await fetch(urlString)
         const products = await allProducts.json()
@@ -14,7 +14,7 @@ const drawProducts = async () => {
     }
 }
 
-const drawCategories = async () => {
+const drawCategories = async () => {//divide it to 2 funcs- get and draw. onload call get, and from get call draw.
     try {
         const allCategories = await fetch(`api/Categories`)
         const categories = await allCategories.json()
@@ -26,7 +26,8 @@ const drawCategories = async () => {
         throw error;
     }
 }
-const productList = addEventListener("load", async () => {
+//const productList =
+    addEventListener("load", async () => {
     drawProducts()
     drawCategories();
 
