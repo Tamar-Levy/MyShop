@@ -4,20 +4,17 @@ using Entities;
 
 namespace MyShop
 {
-    public class Mapper:Profile
+    public class Mapper : Profile
     {
         public Mapper()
         {
-            CreateMap<User, UserDTO>();
-            CreateMap<Product,ProductDTO>();
-            CreateMap<Order, OrderDTO>();
-            CreateMap<Order, ListUserDTO>();
-            CreateMap<PostOrderDTO, Order>();
-            CreateMap<LoginUserDTO, User>();
-            CreateMap<PostUserDTO, User>();
+            CreateMap<User, GetUserDTO>();
+            CreateMap<RegisterUserDTO, User>();
+            CreateMap<Product, ProductDTO>();
             CreateMap<Category, CategoryDTO>();
-            CreateMap<User, LoginUserDTO>();
-
+            CreateMap<Order, OrderDTO>();
+            CreateMap<OrderItemDTO, OrderItem>();
+            CreateMap<PostOrderDTO, Order>();
         }
     }
 }

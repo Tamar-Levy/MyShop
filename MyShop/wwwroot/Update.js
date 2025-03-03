@@ -1,5 +1,5 @@
 ﻿const title = document.querySelector("#title")
-title.textContent = `${JSON.parse(sessionStorage.getItem('user')).firstName} you logged successfully!`
+title.textContent = `${JSON.parse(sessionStorage.getItem('user')).firstName} ${JSON.parse(sessionStorage.getItem('user')).lastName} you logged successfully!`
 
 const toUpdate = () => {
     const update = document.querySelector("#update");
@@ -7,11 +7,11 @@ const toUpdate = () => {
 }
 
 const getDataFromForm = () => {
-    const email = document.querySelector("#email").value;
+    const userName = document.querySelector("#userName").value;
     const password = document.querySelector("#password").value;
     const firstName = document.querySelector("#firstName").value;
     const lastName = document.querySelector("#lastName").value;
-    return { email, password, firstName, lastName };
+    return { userName, password, firstName, lastName };
 }
 
 const updateUser = async () => {
@@ -24,38 +24,39 @@ const updateUser = async () => {
             },
             body: JSON.stringify(user)
         });
-        if (responsePost.status == 204) {
-            alert("weak password")
-        }
-        if (responsePost.status == 400) {
-            alert("user not found")
-        }
-        else if (!responsePost.ok) {
-            alert("Error, please try again")
+        const data = await responsePost.json();
+        console.log(data)
+        if (!responsePost.ok) {
+            if (responsePost.status === 400)
+                alert(data.title)
+            else
+                alert(data.message || "Error, Please try again");
+            return;
         }
         else {
-            const data = await responsePost.json();
             sessionStorage.setItem('user', JSON.stringify(data))
-            alert(`${data.email} updated`);
+            alert(`${data.userName} updated`);
         }
     }
     catch (error) {
         throw error;
     }
 }
-const checkpassword = async () => {
+
+const checkPassword = async () => {
     const password = document.querySelector("#password").value;
     const score = document.querySelector("#score");
     try {
-        const responsePost = await fetch('api/users/password', {
+        const response = await fetch('api/users/password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(password)
         });
-        const data = await responsePost.json();
+        const data = await response.json();
         score.value = data;
+        console.log(score.value);
     }
     catch (error) {
         throw error;

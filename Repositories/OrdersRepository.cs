@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace Repositories
 {
     public class OrdersRepository : IOrdersRepository
     {
-        MyShop0331Context _context;
+        MyShop215736745Context _context;
 
-        public OrdersRepository(MyShop0331Context context)
+        public OrdersRepository(MyShop215736745Context context)
         {
             _context = context;
         }
@@ -20,7 +21,7 @@ namespace Repositories
         //Get
         public async Task<Order> GetById(int id)
         {
-            return await _context.Orders.Include(o=>o.User).FirstOrDefaultAsync(order => order.OrderId == id);
+            return await _context.Orders.Include(o=>o.User).Include(o=>o.OrderItems).FirstOrDefaultAsync(order => order.OrderId == id);
         }
 
         //Post
@@ -30,5 +31,7 @@ namespace Repositories
             await _context.SaveChangesAsync();
             return order;
         }
+
+     
     }
 }
