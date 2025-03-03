@@ -10,25 +10,29 @@ namespace Repositories
 {
     public class ProductsRepository : IProductsRepository
     {
-        MyShop0331Context _context;
+        MyShop215736745Context _context;
 
-        public ProductsRepository(MyShop0331Context context)
+        public ProductsRepository(MyShop215736745Context context)
         {
             _context = context;
         }
 
         //Get
-        public async Task<List<Product>> Get(int position,int skip, string? name, int? minPrice, int? maxPrice, int?[]categoryIds)
+        public async Task<IEnumerable<Product>> Get(int? position, int? skip, string? name, int? minPrice, int? maxPrice, int?[] categoriesId)
         {
-            var query = _context.Products.Include(c => c.Category).Where(product => (name == null ? (true) : (product.Description.Contains(name)))
+            var query = _context.Products.Include(p => p.Category).Where(product =>
+            (name == null ? (true) : (product.ProductName.Contains(name)))
             && ((minPrice == null) ? (true) : (product.Price >= minPrice))
             && ((maxPrice == null) ? (true) : (product.Price <= maxPrice))
-            && ((categoryIds.Length == 0) ? (true) : (categoryIds.Contains(product.CategoryId)))).OrderBy(product => product.Price);
-            List<Product> products = await query.ToListAsync();
+            && ((categoriesId.Length == 0) ? (true) : (categoriesId.Contains(product.CategoryId))))
+                .OrderBy(product => product.Price);
+            IEnumerable<Product> products = await query.ToListAsync();
             return products;
         }
+
         public async Task<Product> AddProduct(Product product)
         {
+
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             return product;

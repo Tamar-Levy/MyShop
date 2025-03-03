@@ -6,9 +6,9 @@ using Entities;
 namespace Repositories;
 public class UsersRepository : IUsersRepository 
 {
-    MyShop0331Context _context;
+    MyShop215736745Context _context;
 
-    public UsersRepository(MyShop0331Context context)
+    public UsersRepository(MyShop215736745Context context)
     {
         _context = context;
     }
@@ -16,16 +16,14 @@ public class UsersRepository : IUsersRepository
     // GetById
     public async Task<User> GetById(int id)
     {
-        return await _context.Users.Include(u=>u.Orders).FirstOrDefaultAsync(user => user.UserId == id);
+        return await _context.Users.Include(u => u.Orders).FirstOrDefaultAsync(user => user.UserId == id);
     }
 
     //Login
-    public async Task<User> LoginUser(string email, string password)
+    public async Task<User> LoginUser(string userName, string password)
     {
-        User userFound= await _context.Users.FirstOrDefaultAsync(user => user.Email == email && user.Password == password);
-        if (userFound != null)
-            return userFound;
-        return null;
+        User userFound= await _context.Users.FirstOrDefaultAsync(user => user.UserName == userName && user.Password == password);
+        return userFound;
     }
 
     //Register

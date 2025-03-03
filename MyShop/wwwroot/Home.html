@@ -3,9 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <title>Home</title>
+    <script defer src="Home.js"></script>
 </head>
 <body>
-    <script defer src="Home.js"></script>
+    <a href="Products.html">מעבר למוצרים</a>
     <div>
         <h2>Log in</h2>
         <input type="email" placeholder="User Email" id="loginUserName" />
@@ -18,9 +19,9 @@
 
     <div style="visibility:hidden" id="register">
         <h2>Register</h2>
-        <input type="email" placeholder="User Email" id="email" />
+        <input type="email" placeholder="User Email" id="userName" />
         <br />
-        <input onblur="checkpassword()"  type="password" placeholder="Password" id="password" />
+        <input onblur="checkPassword()" type="password" placeholder="Password" id="password" />
         <br />
         <progress id="score" value="0" max="5"></progress>
         <br />
@@ -29,7 +30,6 @@
         <input type="text" placeholder="Last Name" id="lastName" />
         <br />
         <button onclick="createUser()">Register</button>
-
     </div>
 </body>
 </html>

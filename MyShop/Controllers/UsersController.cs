@@ -4,6 +4,7 @@ using Entities;
 using Services;
 using DTO;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace MyShop.Controllers
@@ -14,46 +15,54 @@ namespace MyShop.Controllers
     {
         IUserService _userServices;
         IMapper _mapper;
+        ILogger<UsersController> _logger;
 
-        public UsersController(IUserService userServices,IMapper mapper)
+        public UsersController(IUserService userServices, IMapper mapper, ILogger<UsersController> logger)
         {
             _userServices = userServices;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public async Task<UserDTO> Get(int id)
+        public async Task<GetUserDTO> Get(int id)
         {
-          User user = await _userServices.GetById(id);
-          return _mapper.Map <User,UserDTO>(user);
+            User user = await _userServices.GetById(id);
+            return _mapper.Map<User, GetUserDTO>(user);
         }
 
         // POST api/<UsersController>
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<LoginUserDTO>> Login([FromQuery] string email , [FromQuery] string password)
+        public async Task<ActionResult<GetUserDTO>> Login([FromQuery] string userName , [FromQuery] string password)
         {
-            User user=await _userServices.LoginUser(email, password);
-            if (user != null) 
-                return Ok(_mapper.Map<User, LoginUserDTO>(user));
+            User user=await _userServices.LoginUser(userName, password);
+            if (user != null)
+            {
+                _logger.LogInformation($"User name: {user.UserName} Name: {user.FirstName} {user.LastName}");
+                return Ok(_mapper.Map<User, GetUserDTO>(user));
+            }
              return BadRequest();
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Register([FromBody] PostUserDTO user)
+        public async Task<ActionResult<User>> Register([FromBody] RegisterUserDTO registerUserDTO)
         {
-            User NewUser = _mapper.Map<PostUserDTO, User>(user);
-            User userRegister =await _userServices.RegisterUser(NewUser);
-            if (userRegister != null)
+            try
             {
-                if(userRegister.FirstName== "Weak password")
+                User user = _mapper.Map<RegisterUserDTO, User>(registerUserDTO);
+                User userRegister = await _userServices.RegisterUser(user);
+                if (userRegister != null)
                 {
-                    return NoContent();
+                    return Ok(_mapper.Map<User, GetUserDTO>(userRegister));
                 }
-                return Ok(userRegister);
-            }  
-            return BadRequest();
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return Conflict(new { message = "Weak password" });
+            }
         }
 
         [HttpPost]
@@ -65,19 +74,21 @@ namespace MyShop.Controllers
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> Put(int id, [FromBody] PostUserDTO userToUpdate)
+        public async Task<ActionResult<User>> Put(int id, [FromBody] RegisterUserDTO userToUpdateDTO)
         {
-            User NewUser = _mapper.Map<PostUserDTO, User>(userToUpdate);
-            User userUpdate =await _userServices.UpdateUser(id, NewUser);
+            try { 
+            User user = _mapper.Map<RegisterUserDTO, User>(userToUpdateDTO);
+            User userUpdate =await _userServices.UpdateUser(id, user);
             if (userUpdate != null)
             {
-                if (userUpdate.FirstName == "Weak password")
-                {
-                    return NoContent();
-                }
-                return Ok(userUpdate);
+                return Ok(_mapper.Map<User, GetUserDTO>(userUpdate));
             }
             return BadRequest();
+            }
+             catch (Exception ex)
+            {
+                return Conflict(new { message = "Weak password" });
+            }
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Repositories
 {
     public class CategoriesRepository : ICategoriesRepository
     {
-        MyShop0331Context _context;
+        MyShop215736745Context _context;//
 
-        public CategoriesRepository(MyShop0331Context context)
+        public CategoriesRepository(MyShop215736745Context context)
         {
             _context = context;
         }
@@ -20,17 +20,14 @@ namespace Repositories
         //Get
         public async Task<IEnumerable<Category>> Get()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.Categories.Include(c=>c.Products).ToListAsync();
         }
 
         // GetById
         public async Task<Category> GetById(int id)
         {
-            //List<Product> allProducts = await _context.Products.Include(c => c.Category).ToListAsync<Product>();
             Category categoryFound = await _context.Categories.FirstOrDefaultAsync(category => category.CategoryId == id);
-            if (categoryFound != null)
-                return categoryFound;
-            return null;
+            return categoryFound;
         }
     }
 }

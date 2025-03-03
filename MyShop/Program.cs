@@ -1,4 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MyShop;
+using NLog.Web;
+using PresidentsApp.Middlewares;
 using Repositories;
 using Services;
 
@@ -8,24 +13,35 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<MyShop0331Context>(option => option.UseSqlServer("Server=SRV2\\PUPILS;Database=MyShop_0331;Trusted_Connection=True;TrustServerCertificate=True"));
+builder.Services.AddDbContext<MyShop215736745Context>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("School")));
 
-builder.Services.AddTransient<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<IUsersRepository,UsersRepository>();
 
 builder.Services.AddTransient<IUserService, UserService>();
+
 
 builder.Services.AddTransient<IProductsRepository, ProductsRepository>();
 
 builder.Services.AddTransient<IProductsService, ProductsService>();
 
+
 builder.Services.AddTransient<ICategoriesRepository, CategoriesRepository>();
 
 builder.Services.AddTransient<ICategoriesService, CategoriesService>();
 
+
 builder.Services.AddTransient<IOrdersRepository, OrdersRepository>();
 
 builder.Services.AddTransient<IOrdersService, OrdersService>();
+
+
+builder.Services.AddTransient<IRatingRepository, RatingRepository>();
+
+builder.Services.AddTransient<IRatingService, RatingService>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Host.UseNLog();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -40,6 +56,10 @@ if(app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseErrorHandlingMiddleware();
+
+app.UseRatingMiddleware();
 
 app.UseHttpsRedirection();
 

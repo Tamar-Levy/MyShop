@@ -1,38 +1,24 @@
-﻿
-let urlString = `api/Products`
-
-const drawProducts = async () => { 
-    try {
-        const allProducts = await fetch(urlString)
-        const products = await allProducts.json()
-          for (let i = 0; i < products.length; i++) {
-              showOneProduct(products[i])
-          }
-    }
-    catch (error) {
-        throw error;
-    }
-}
-
-const drawCategories = async () => {
-    try {
-        const allCategories = await fetch(`api/Categories`)
-        const categories = await allCategories.json()
-        for (let i = 0; i < categories.length; i++) {
-            showOnecategory(categories[i])
-        }
-    }
-    catch (error) {
-        throw error;
-    }
-}
+﻿//products
 const productList = addEventListener("load", async () => {
-    drawProducts()
-    drawCategories();
+    const shoppingBag = JSON.parse(sessionStorage.getItem("shoppingBag")) || []
+    let itemsCountText = document.getElementById("ItemsCountText");
+    itemsCountText.textContent = shoppingBag.length;
+    getProducts()
+    getCategories();
+})
 
-    //let categoryIdArr = [];
-    //sessionStorage.setItem("categoryIds", JSON.stringify(categoryIdArr))
-}) 
+let urlString = "api/Products";
+const getProducts = async () => {
+    try {
+        console.log(urlString)
+        const getProducts = await fetch(urlString);
+        const products = await getProducts.json()
+        products.forEach(p => showOneProduct(p));
+    }
+    catch (error) {
+        throw error;
+    }
+}
 
 const showOneProduct = async (product) => {
     let tmp = document.getElementById("temp-card");
@@ -45,43 +31,75 @@ const showOneProduct = async (product) => {
     cloneProduct.querySelector("button").addEventListener('click', () => { addToCart(product) })
     document.getElementById("PoductList").appendChild(cloneProduct)
 }
-const showOnecategory = async (category) => {
+
+//categories
+const getCategories= async () => {
+    try {
+        const getCategories = await fetch(`api/Categories`);
+        const categories = await getCategories.json()
+        categories.forEach(c => showOneCategory(c));
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
+const showOneCategory = async (category) => {
     let tmp = document.getElementById("temp-category");
     let cloneCategory = tmp.content.cloneNode(true)
     cloneCategory.querySelector(".OptionName").textContent = category.categoryName
-    cloneCategory.querySelector(".opt").addEventListener('change', () => { filterProductsByCategory(category.categoryId) })
-    document.getElementById("categoryList").appendChild(cloneCategory)
+    cloneCategory.querySelector(".opt").addEventListener('change', () => { filterProductsByCategory(category.categoryId) }) 
+    document.getElementById("CategoryList").appendChild(cloneCategory)
 }
-let categoriesId = []
 
+//filterings
 
-const getDataFromView = () => {
-    const minPrice = document.querySelector("#minPrice").value
-    const maxPrice = document.querySelector("#maxPrice").value
-    const nameSearch = document.querySelector("#nameSearch").value
+//by category
+let selectedCategoryIds = []
+const filterProductsByCategory = async (id) => {
+    console.log(selectedCategoryIds)
+    let index = selectedCategoryIds.indexOf(id);
+    if (index != -1)
+        selectedCategoryIds.splice(index, 1);
+    else
+        selectedCategoryIds.push(id);
+    buildUrl()
+}
+
+//filter
+const getFilterInputs = () => {
+    document.getElementById("PoductList").innerHTML=''
+    const minPrice = document.querySelector("#minPrice").value;
+    const maxPrice = document.querySelector("#maxPrice").value;
+    const nameSearch = document.querySelector("#nameSearch").value;
     return { minPrice, maxPrice, nameSearch };
 }
 
-const filterProductsByCategory = (id) => {
-    let ind = categoriesId.indexOf(id)
-    if(ind!=-1)
-        categoriesId.splice(ind, 1)
-    else
-        categoriesId[categoriesId.length] = id
-    filterProducts()
-}
-const filterProducts = async () => {
-    const { minPrice, maxPrice, nameSearch } = getDataFromView()
-            if (minPrice || maxPrice || nameSearch || categoriesId)
-                urlString += '?'
-            if (minPrice)
-                urlString += `&minPrice=${minPrice}`
-            if (maxPrice)
-                urlString += `&maxPrice=${maxPrice}`
-            if (nameSearch)
-                urlString += `&name=${nameSearch}`
-            if (categoriesId) {
-                categoriesId.map(c => urlString += `&categorieIds=${c}`)
-            }
-        drawProducts()
+const buildUrl= () =>
+{
+    urlString = "api/Products";
+    const { minPrice, maxPrice, nameSearch } = getFilterInputs();
+    if (minPrice || maxPrice || nameSearch || selectedCategoryIds ) {
+        urlString += '?'
+        if (minPrice)
+            urlString += `&minPrice=${minPrice}`
+        if (maxPrice)
+            urlString += `&maxPrice=${maxPrice}`
+        if (nameSearch)
+            urlString += `&name=${nameSearch}`
+        if (selectedCategoryIds) {
+            selectedCategoryIds.map(c => urlString += `&categoriesId=${c}`)
+        }
     }
+    getProducts()
+}
+
+//Add To Cart
+const shoppingBag = JSON.parse(sessionStorage.getItem("shoppingBag")) || []
+const addToCart = (product) => {
+    shoppingBag.push(product)
+    sessionStorage.setItem('shoppingBag', JSON.stringify(shoppingBag))
+    let itemsCountText = document.getElementById("ItemsCountText");
+    itemsCountText.textContent = shoppingBag.length;
+
+}

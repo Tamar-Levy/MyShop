@@ -10,9 +10,9 @@ public class UserService : IUserService
     {
         _userRepository = userRepository;
     }
-    public async Task<User> LoginUser(string email, string password)
+    public async Task<User> LoginUser(string userName, string password)
     {
-        return await _userRepository.LoginUser(email, password);
+        return await _userRepository.LoginUser(userName, password);
     }
 
     public async Task<User> GetById(int id)
@@ -22,12 +22,10 @@ public class UserService : IUserService
 
     public async Task<User> RegisterUser(User user)
     {
-        var result = CheckPassword(user.Password);
-        if (result< 2)
+        var checkPasswordResult = CheckPassword(user.Password);
+        if (checkPasswordResult < 2)
         {
-            User tmpUser = new();
-            tmpUser.FirstName = "Weak password";
-            return tmpUser;
+            throw new Exception("Weak password");
         }
         return await _userRepository.Register(user);
     }
@@ -37,9 +35,7 @@ public class UserService : IUserService
         var result = CheckPassword(user.Password);
         if (result < 2)
         {
-            User tmpUser = new();
-            tmpUser.FirstName = "Weak password";
-            return tmpUser;
+            throw new Exception("Weak password");
         }
         return await _userRepository.UpdateUser(id, user);
     }
